@@ -115,9 +115,7 @@ let segment = AudioSegment(
 
 [RetroRapid](https://accessibilityupto11.com/apps/retrorapid/) uses ArcadeAudioKit recipes for its generated game effects. Its crash cue is built as a sharp square-wave impact, a descending triangle downturn, and a repeated low tail:
 
-[Listen to the generated crash cue](audio/retrorapid-crash.wav). The MP4 sample is included below so GitHub can render it inline when supported:
-
-https://github.com/dadederk/ArcadeAudioKit/blob/main/audio/retrorapid-crash.mp4
+[Listen to the generated crash cue](audio/retrorapid-crash.wav), or open the [MP4 sample](audio/retrorapid-crash.mp4).
 
 The WAV file is rendered from the recipe below and can be regenerated from [Examples/retrorapid-crash.recipe.json](Examples/retrorapid-crash.recipe.json) with the recipe renderer.
 
