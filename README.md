@@ -113,8 +113,7 @@ let segment = AudioSegment(
 
 ## Apps Using ArcadeAudioKit
 
-- RandomForest - generated sound-effect recipes and preview tooling.
-- RetroRapid - generated sound-effect recipe rendering while keeping existing playback policy.
+- [RetroRapid!](https://accessibilityupto11.com/apps/retrorapid/) - play the game and hear sounds composed with ArcadeAudioKit.
 - Let us know if you'd like your app to be listed here.
 
 ## Xcode Integration
