@@ -100,9 +100,20 @@ let segment = AudioSegment(
 )
 ```
 
+## API Overview
+
+- `AudioNote`: scientific pitch notation and `A4 = 440` frequency conversion.
+- `AudioWaveform`: `.sine`, `.triangle`, and `.square`.
+- `AudioPitch`: constant notes, explicit Hz values, sweeps, and interpolated pitch motion.
+- `AudioSegment`: one timed waveform building block.
+- `AudioRepeatedMotif`: repeated segment groups for generated tails.
+- `AudioRecipe`: ordered segments plus an optional repeated motif.
+- `AudioPCMRenderer.render(recipe:pitchCents:sampleRate:)`: deterministic mono PCM rendering.
+- Note-first summary helpers for preview tools and recipe screens.
+
 ## Real-World Example: RetroRapid Crash Cue
 
-RetroRapid uses ArcadeAudioKit recipes for its generated game effects. Its crash cue is built as a sharp square-wave impact, a descending triangle downturn, and a repeated low tail:
+[RetroRapid](https://accessibilityupto11.com/apps/retrorapid/) uses ArcadeAudioKit recipes for its generated game effects. Its crash cue is built as a sharp square-wave impact, a descending triangle downturn, and a repeated low tail:
 
 ```swift
 import ArcadeAudioKit
@@ -218,18 +229,7 @@ func makeBuffer(recipe: AudioRecipe, format: AVAudioFormat) -> AVAudioPCMBuffer?
 }
 ```
 
-RetroRapid schedules that buffer on its own `AVAudioPlayerNode` when a crash is detected, while ArcadeAudioKit remains responsible only for recipe modeling and sample rendering.
-
-## API Overview
-
-- `AudioNote`: scientific pitch notation and `A4 = 440` frequency conversion.
-- `AudioWaveform`: `.sine`, `.triangle`, and `.square`.
-- `AudioPitch`: constant notes, explicit Hz values, sweeps, and interpolated pitch motion.
-- `AudioSegment`: one timed waveform building block.
-- `AudioRepeatedMotif`: repeated segment groups for generated tails.
-- `AudioRecipe`: ordered segments plus an optional repeated motif.
-- `AudioPCMRenderer.render(recipe:pitchCents:sampleRate:)`: deterministic mono PCM rendering.
-- Note-first summary helpers for preview tools and recipe screens.
+[RetroRapid](https://accessibilityupto11.com/apps/retrorapid/) schedules that buffer on its own `AVAudioPlayerNode` when a crash is detected, while ArcadeAudioKit remains responsible only for recipe modeling and sample rendering.
 
 ## Apps Using ArcadeAudioKit
 
