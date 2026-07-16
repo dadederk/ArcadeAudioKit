@@ -100,6 +100,126 @@ let segment = AudioSegment(
 )
 ```
 
+## Real-World Example: RetroRapid Crash Cue
+
+RetroRapid uses ArcadeAudioKit recipes for its generated game effects. Its crash cue is built as a sharp square-wave impact, a descending triangle downturn, and a repeated low tail:
+
+```swift
+import ArcadeAudioKit
+
+func makeCrashRecipe(tailRepeatCount: Int = 3) -> AudioRecipe {
+    let impact = [
+        AudioSegment(
+            waveform: .square,
+            pitch: .constantHz(330),
+            durationMilliseconds: 120,
+            amplitudePercent: 24,
+            attackMilliseconds: 2,
+            decayMilliseconds: 18
+        ),
+        AudioSegment(
+            waveform: .square,
+            pitch: .constantHz(277.18),
+            durationMilliseconds: 120,
+            amplitudePercent: 24,
+            attackMilliseconds: 2,
+            decayMilliseconds: 20
+        )
+    ]
+
+    let downturn = [
+        AudioSegment(
+            waveform: .triangle,
+            pitch: .sweepHz(startHz: 260, endHz: 220),
+            durationMilliseconds: 150,
+            amplitudePercent: 22,
+            attackMilliseconds: 2,
+            decayMilliseconds: 20
+        ),
+        AudioSegment(
+            waveform: .triangle,
+            pitch: .sweepHz(startHz: 220, endHz: 185),
+            durationMilliseconds: 150,
+            amplitudePercent: 22,
+            attackMilliseconds: 2,
+            decayMilliseconds: 20
+        ),
+        AudioSegment(
+            waveform: .triangle,
+            pitch: .sweepHz(startHz: 185, endHz: 155),
+            durationMilliseconds: 160,
+            amplitudePercent: 21,
+            attackMilliseconds: 2,
+            decayMilliseconds: 22
+        ),
+        AudioSegment(
+            waveform: .triangle,
+            pitch: .sweepHz(startHz: 155, endHz: 130),
+            durationMilliseconds: 160,
+            amplitudePercent: 20,
+            attackMilliseconds: 2,
+            decayMilliseconds: 22
+        )
+    ]
+
+    let tail = AudioRepeatedMotif(
+        segments: [
+            AudioSegment(
+                waveform: .triangle,
+                pitch: .sweepHz(startHz: 130, endHz: 118),
+                durationMilliseconds: 180,
+                amplitudePercent: 18,
+                attackMilliseconds: 2,
+                decayMilliseconds: 28
+            ),
+            AudioSegment(
+                waveform: .triangle,
+                pitch: .sweepHz(startHz: 118, endHz: 104),
+                durationMilliseconds: 160,
+                amplitudePercent: 16,
+                attackMilliseconds: 2,
+                decayMilliseconds: 30
+            )
+        ],
+        repeatCount: tailRepeatCount
+    )
+
+    return AudioRecipe(segments: impact + downturn, repeatedMotif: tail)
+}
+```
+
+ArcadeAudioKit then turns the recipe into deterministic mono PCM. Playback stays in the app layer; for example, a consumer using AVFoundation can copy the rendered samples into an `AVAudioPCMBuffer`:
+
+```swift
+import AVFoundation
+import ArcadeAudioKit
+
+func makeBuffer(recipe: AudioRecipe, format: AVAudioFormat) -> AVAudioPCMBuffer? {
+    let samples = AudioPCMRenderer.render(
+        recipe: recipe,
+        sampleRate: format.sampleRate
+    )
+    guard samples.isEmpty == false,
+          let buffer = AVAudioPCMBuffer(
+            pcmFormat: format,
+            frameCapacity: AVAudioFrameCount(samples.count)
+          ),
+          let channel = buffer.floatChannelData?[0] else {
+        return nil
+    }
+
+    buffer.frameLength = AVAudioFrameCount(samples.count)
+    samples.withUnsafeBufferPointer { source in
+        if let baseAddress = source.baseAddress {
+            channel.update(from: baseAddress, count: samples.count)
+        }
+    }
+    return buffer
+}
+```
+
+RetroRapid schedules that buffer on its own `AVAudioPlayerNode` when a crash is detected, while ArcadeAudioKit remains responsible only for recipe modeling and sample rendering.
+
 ## API Overview
 
 - `AudioNote`: scientific pitch notation and `A4 = 440` frequency conversion.
