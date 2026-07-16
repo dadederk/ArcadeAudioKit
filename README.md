@@ -115,7 +115,7 @@ let segment = AudioSegment(
 
 [RetroRapid](https://accessibilityupto11.com/apps/retrorapid/) uses ArcadeAudioKit recipes for its generated game effects. Its crash cue is built as a sharp square-wave impact, a descending triangle downturn, and a repeated low tail:
 
-[Listen to the generated crash cue](audio/retrorapid-crash.wav). The WAV file is rendered from the recipe below.
+[Listen to the generated crash cue](audio/retrorapid-crash.wav). The WAV file is rendered from the recipe below and can be regenerated from [Examples/retrorapid-crash.recipe.json](Examples/retrorapid-crash.recipe.json) with the recipe renderer.
 
 ```swift
 import ArcadeAudioKit
@@ -251,6 +251,27 @@ func makeBuffer(recipe: AudioRecipe, format: AVAudioFormat) -> AVAudioPCMBuffer?
 - The pitch sounds different than expected: inspect `AudioPitch.displayName` for note-first labels and `technicalFrequencyDescription` for derived Hz values.
 - Import problems in Xcode: confirm your target links the `ArcadeAudioKit` product and uses compatible platform deployment targets.
 - Playback issues: handle those in the consuming app, because ArcadeAudioKit does not configure audio sessions or own audio player nodes.
+
+## Rendering Recipe Audio
+
+Most apps can use ArcadeAudioKit directly at runtime by rendering recipes into PCM and handing those samples to their own audio stack. If you prefer to export recipe previews or checked-in sound files ahead of time, use the command-line renderer to turn an `AudioRecipe` JSON file into a WAV:
+
+```bash
+swift run render-audio-recipe <recipe.json> <output.wav>
+```
+
+The input file must decode as `AudioRecipe`. The output is deterministic mono 16-bit PCM WAV, rendered with `AudioPCMRenderer`.
+
+Optional flags:
+
+- `--sample-rate 44100`: render at a specific sample rate. Defaults to `44100`.
+- `--pitch-cents 0`: transpose the rendered recipe by cents. Defaults to `0`.
+
+To regenerate the README crash cue:
+
+```bash
+swift run render-audio-recipe Examples/retrorapid-crash.recipe.json audio/retrorapid-crash.wav
+```
 
 ## Development
 

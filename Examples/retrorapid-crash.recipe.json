@@ -1,0 +1,111 @@
+{
+  "segments" : [
+    {
+      "amplitudePercent" : 24,
+      "attackMilliseconds" : 2,
+      "decayMilliseconds" : 18,
+      "durationMilliseconds" : 120,
+      "pitch" : {
+        "constantHz" : {
+          "_0" : 330
+        }
+      },
+      "waveform" : "square"
+    },
+    {
+      "amplitudePercent" : 24,
+      "attackMilliseconds" : 2,
+      "decayMilliseconds" : 20,
+      "durationMilliseconds" : 120,
+      "pitch" : {
+        "constantHz" : {
+          "_0" : 277.18
+        }
+      },
+      "waveform" : "square"
+    },
+    {
+      "amplitudePercent" : 22,
+      "attackMilliseconds" : 2,
+      "decayMilliseconds" : 20,
+      "durationMilliseconds" : 150,
+      "pitch" : {
+        "sweepHz" : {
+          "endHz" : 220,
+          "startHz" : 260
+        }
+      },
+      "waveform" : "triangle"
+    },
+    {
+      "amplitudePercent" : 22,
+      "attackMilliseconds" : 2,
+      "decayMilliseconds" : 20,
+      "durationMilliseconds" : 150,
+      "pitch" : {
+        "sweepHz" : {
+          "endHz" : 185,
+          "startHz" : 220
+        }
+      },
+      "waveform" : "triangle"
+    },
+    {
+      "amplitudePercent" : 21,
+      "attackMilliseconds" : 2,
+      "decayMilliseconds" : 22,
+      "durationMilliseconds" : 160,
+      "pitch" : {
+        "sweepHz" : {
+          "endHz" : 155,
+          "startHz" : 185
+        }
+      },
+      "waveform" : "triangle"
+    },
+    {
+      "amplitudePercent" : 20,
+      "attackMilliseconds" : 2,
+      "decayMilliseconds" : 22,
+      "durationMilliseconds" : 160,
+      "pitch" : {
+        "sweepHz" : {
+          "endHz" : 130,
+          "startHz" : 155
+        }
+      },
+      "waveform" : "triangle"
+    }
+  ],
+  "repeatedMotif" : {
+    "repeatCount" : 3,
+    "segments" : [
+      {
+        "amplitudePercent" : 18,
+        "attackMilliseconds" : 2,
+        "decayMilliseconds" : 28,
+        "durationMilliseconds" : 180,
+        "pitch" : {
+          "sweepHz" : {
+            "endHz" : 118,
+            "startHz" : 130
+          }
+        },
+        "waveform" : "triangle"
+      },
+      {
+        "amplitudePercent" : 16,
+        "attackMilliseconds" : 2,
+        "decayMilliseconds" : 30,
+        "durationMilliseconds" : 160,
+        "pitch" : {
+          "sweepHz" : {
+            "endHz" : 104,
+            "startHz" : 118
+          }
+        },
+        "waveform" : "triangle"
+      }
+    ]
+  }
+}

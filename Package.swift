@@ -16,10 +16,22 @@ let package = Package(
             name: "ArcadeAudioKit",
             targets: ["ArcadeAudioKit"]
         ),
+        .executable(
+            name: "render-audio-recipe",
+            targets: ["RenderAudioRecipe"]
+        ),
     ],
     targets: [
         .target(
             name: "ArcadeAudioKit",
+            swiftSettings: [
+                .enableUpcomingFeature("ApproachableConcurrency"),
+            ]
+        ),
+        .executableTarget(
+            name: "RenderAudioRecipe",
+            dependencies: ["ArcadeAudioKit"],
+            path: "Tools/RenderAudioRecipe",
             swiftSettings: [
                 .enableUpcomingFeature("ApproachableConcurrency"),
             ]
