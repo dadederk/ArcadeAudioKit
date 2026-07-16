@@ -115,7 +115,7 @@ let segment = AudioSegment(
 
 [RetroRapid](https://accessibilityupto11.com/apps/retrorapid/) uses ArcadeAudioKit recipes for its generated game effects. Its crash cue is built as a sharp square-wave impact, a descending triangle downturn, and a repeated low tail:
 
-[Listen to the generated crash cue](audio/retrorapid-crash.wav). The WAV file is rendered from the recipe below and can be regenerated from [Examples/retrorapid-crash.recipe.json](Examples/retrorapid-crash.recipe.json) with the recipe renderer.
+[Listen to the generated crash cue](audio/retrorapid-crash.wav) or try the [MP4 fallback](audio/retrorapid-crash.mp4). The WAV file is rendered from the recipe below and can be regenerated from [Examples/retrorapid-crash.recipe.json](Examples/retrorapid-crash.recipe.json) with the recipe renderer.
 
 ```swift
 import ArcadeAudioKit
@@ -228,6 +228,35 @@ func makeBuffer(recipe: AudioRecipe, format: AVAudioFormat) -> AVAudioPCMBuffer?
         }
     }
     return buffer
+}
+```
+
+For a minimal AVFoundation player, create an engine, schedule the buffer, and start the player node in the app layer:
+
+```swift
+final class RecipePreviewPlayer {
+    private let engine = AVAudioEngine()
+    private let player = AVAudioPlayerNode()
+    private let format = AVAudioFormat(
+        standardFormatWithSampleRate: 44_100,
+        channels: 1
+    )!
+
+    init() throws {
+        engine.attach(player)
+        engine.connect(player, to: engine.mainMixerNode, format: format)
+        try engine.start()
+    }
+
+    func play(recipe: AudioRecipe) {
+        guard let buffer = makeBuffer(recipe: recipe, format: format) else {
+            return
+        }
+
+        player.stop()
+        player.scheduleBuffer(buffer, at: nil, options: [.interrupts])
+        player.play()
+    }
 }
 ```
 
