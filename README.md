@@ -1,24 +1,58 @@
 # ArcadeAudioKit
 
-ArcadeAudioKit is a small pure Swift package for describing and rendering generated arcade-style sound effects.
+<p align="center">
+  <img src="images/ArcadeAudioKit.png" alt="ArcadeAudioKit logo" width="420">
+</p>
 
-It owns value models for musical notes, pitch movement, waveform segments, repeated motifs, and recipes. It also includes a deterministic mono PCM renderer. It does not configure audio sessions, play sounds, log events, ship game-specific cue IDs, or import AVFoundation.
+[![Swift](https://img.shields.io/badge/swift-6.2%2B-F05138.svg)](https://swift.org)
+![Platforms](https://img.shields.io/badge/platform-iOS%2018%2B%20%7C%20macOS%2012%2B%20%7C%20tvOS%2018%2B%20%7C%20watchOS%2011%2B%20%7C%20visionOS%202%2B-0A84FF.svg)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+
+Recipe-first sound-effect modeling and deterministic mono PCM rendering for Swift packages and Apple-platform games.
+
+ArcadeAudioKit provides:
+- Musical note models using scientific pitch notation, such as `A4`, `F#5`, and `Bb4`.
+- Pitch movement models for constant notes, explicit Hz values, sweeps, and progress/intensity interpolation.
+- Timed waveform segments with duration, loudness, attack, and decay.
+- Repeated motifs for short generated tails and loops.
+- A deterministic mono `Float` PCM renderer.
+
+v1 scope is recipe modeling and rendering only. Audio playback, audio sessions, mixing policy, logging, accessibility behavior, app-specific cue IDs, and AVFoundation integration are intentionally out of scope.
+
+## Requirements
+
+| Item | Requirement |
+| --- | --- |
+| Swift tools | 6.2+ |
+| iOS | 18+ |
+| macOS | 12+ |
+| tvOS | 18+ |
+| watchOS | 11+ |
+| visionOS | 2+ |
+| Dependencies | None |
 
 ## Installation
 
-During local development, add ArcadeAudioKit as a sibling package:
+During local development, add ArcadeAudioKit as a sibling package in your `Package.swift` dependencies:
 
 ```swift
-.package(path: "../ArcadeAudioKit")
+dependencies: [
+    .package(path: "../ArcadeAudioKit")
+]
 ```
 
-Then depend on the library product:
+Then add the product to your target:
 
 ```swift
-.product(name: "ArcadeAudioKit", package: "ArcadeAudioKit")
+target(
+    name: "YourGame",
+    dependencies: [
+        .product(name: "ArcadeAudioKit", package: "ArcadeAudioKit")
+    ]
+)
 ```
 
-When the package is published remotely, replace the local path with the repository URL and a tagged version requirement.
+When the package is published remotely, replace the local path dependency with the repository URL and a tagged version requirement.
 
 ## Core Concepts
 
@@ -31,7 +65,7 @@ A recipe is a short sequence of sound segments. Each segment chooses:
 
 Notes use scientific pitch notation, such as `A4`, `F#5`, or `Bb4`. Hz values remain available for legacy tuning and non-musical effects.
 
-## Example
+## Quick Start
 
 ```swift
 import ArcadeAudioKit
@@ -52,15 +86,59 @@ let samples = AudioPCMRenderer.render(recipe: recipe, sampleRate: 44_100)
 
 The returned samples are mono `Float` PCM values bounded to `-1...1`. Consumers are responsible for converting those samples into platform audio buffers and deciding playback, session, mixing, interruption, logging, and accessibility policy.
 
-## Platform Scope
+Progress/intensity example:
 
-ArcadeAudioKit currently declares the platform floors used by its first game consumers:
+```swift
+let progress = 0.75
+let segment = AudioSegment(
+    waveform: .sine,
+    pitch: .interpolatedConstant(lower: .c5, upper: .g5, amount: progress),
+    durationMilliseconds: 60,
+    amplitudePercent: 10,
+    attackMilliseconds: 3,
+    decayMilliseconds: 35
+)
+```
 
-- iOS 18
-- macOS 12
-- tvOS 18
-- watchOS 11
-- visionOS 2
+## API Overview
 
-The implementation is pure Swift and intentionally avoids Apple UI or audio playback frameworks.
+- `AudioNote`: scientific pitch notation and `A4 = 440` frequency conversion.
+- `AudioWaveform`: `.sine`, `.triangle`, and `.square`.
+- `AudioPitch`: constant notes, explicit Hz values, sweeps, and interpolated pitch motion.
+- `AudioSegment`: one timed waveform building block.
+- `AudioRepeatedMotif`: repeated segment groups for generated tails.
+- `AudioRecipe`: ordered segments plus an optional repeated motif.
+- `AudioPCMRenderer.render(recipe:pitchCents:sampleRate:)`: deterministic mono PCM rendering.
+- Note-first summary helpers for preview tools and recipe screens.
 
+## Apps Using ArcadeAudioKit
+
+- RandomForest - generated sound-effect recipes and preview tooling.
+- RetroRapid - generated sound-effect recipe rendering while keeping existing playback policy.
+- Let us know if you'd like your app to be listed here.
+
+## Xcode Integration
+
+1. In Xcode, open your project and select `File > Add Package Dependencies...`
+2. Choose `Add Local...` for sibling development, or enter the public repository URL after publishing.
+3. Add the `ArcadeAudioKit` library product to your target.
+
+## Troubleshooting
+
+- A rendered buffer is empty: check that the recipe has at least one non-zero-duration segment and that the sample rate is greater than zero.
+- The cue is silent or too quiet: verify `amplitudePercent`, attack/decay timing, and any consuming app volume settings.
+- The pitch sounds different than expected: inspect `AudioPitch.displayName` for note-first labels and `technicalFrequencyDescription` for derived Hz values.
+- Import problems in Xcode: confirm your target links the `ArcadeAudioKit` product and uses compatible platform deployment targets.
+- Playback issues: handle those in the consuming app, because ArcadeAudioKit does not configure audio sessions or own audio player nodes.
+
+## Development
+
+- Run tests:
+
+```bash
+swift test
+```
+
+## License
+
+MIT. See [LICENSE](LICENSE).
