@@ -33,11 +33,11 @@ v1 scope is recipe modeling and rendering only. Audio playback, audio sessions, 
 
 ## Installation
 
-During local development, add ArcadeAudioKit as a sibling package in your `Package.swift` dependencies:
+Add ArcadeAudioKit to your `Package.swift` dependencies:
 
 ```swift
 dependencies: [
-    .package(path: "../ArcadeAudioKit")
+    .package(url: "https://github.com/dadederk/ArcadeAudioKit.git", from: "0.1.0")
 ]
 ```
 
@@ -52,7 +52,7 @@ target(
 )
 ```
 
-When the package is published remotely, replace the local path dependency with the repository URL and a tagged version requirement.
+For sibling-package development, temporarily replace the remote dependency with `.package(path: "../ArcadeAudioKit")`.
 
 ## Core Concepts
 
@@ -64,6 +64,13 @@ A recipe is a short sequence of sound segments. Each segment chooses:
 - loudness as an amplitude percentage.
 
 Notes use scientific pitch notation, such as `A4`, `F#5`, or `Bb4`. Hz values remain available for legacy tuning and non-musical effects.
+
+## Runtime and Audio Boundaries
+
+- ArcadeAudioKit renders deterministic mono PCM samples from recipe data.
+- It does not configure audio sessions, start audio engines, own player nodes, or choose mixing and interruption policy.
+- It does not own logging, accessibility behavior, app-specific cue IDs, or user-facing audio settings.
+- Consuming apps decide how rendered samples become buffers, files, previews, or live gameplay audio.
 
 ## Quick Start
 
@@ -269,10 +276,14 @@ final class RecipePreviewPlayer {
 - [RetroRapid!](https://accessibilityupto11.com/apps/retrorapid/) - play the game and hear sounds composed with ArcadeAudioKit.
 - Let us know if you'd like your app to be listed here.
 
+## Architecture
+
+For a diagram-first view of the recipe model, renderer flow, command-line renderer, and consuming-app boundary, see [ARCHITECTURE.md](ARCHITECTURE.md).
+
 ## Xcode Integration
 
 1. In Xcode, open your project and select `File > Add Package Dependencies...`
-2. Choose `Add Local...` for sibling development, or enter the public repository URL after publishing.
+2. Enter `https://github.com/dadederk/ArcadeAudioKit.git`.
 3. Add the `ArcadeAudioKit` library product to your target.
 
 ## Troubleshooting
@@ -311,6 +322,18 @@ swift run render-audio-recipe Examples/retrorapid-crash.recipe.json audio/retror
 ```bash
 swift test
 ```
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for release history and breaking-change notes.
+
+## Support
+
+See [SUPPORT.md](SUPPORT.md) for issue-reporting guidance and package support boundaries.
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for local setup and PR guidelines.
 
 ## License
 
